@@ -1,0 +1,130 @@
+-- Удаляем старую базу данных, если существует
+DROP DATABASE IF EXISTS taxi_dispatch;
+
+-- Создаем новую базу данных
+CREATE DATABASE taxi_dispatch;
+USE taxi_dispatch;
+
+-- ============================================
+-- 1. СОЗДАЕМ ТАБЛИЦЫ
+-- ============================================
+
+-- Таблица водителей
+CREATE TABLE drivers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    full_name VARCHAR(100) NOT NULL,
+    phone VARCHAR(20),
+    car_model VARCHAR(100),
+    car_number VARCHAR(10) UNIQUE,
+    status ENUM('available', 'on_shift', 'busy') DEFAULT 'available'
+);
+
+-- Таблица диспетчеров
+CREATE TABLE dispatchers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    full_name VARCHAR(100) NOT NULL,
+    login VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL
+);
+
+-- Таблица клиентов
+CREATE TABLE clients (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    full_name VARCHAR(100) NOT NULL,
+    phone VARCHAR(20) NOT NULL
+);
+
+-- Таблица тарифов
+CREATE TABLE tariffs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    price_per_km DECIMAL(10,2) NOT NULL,
+    price_per_minute DECIMAL(10,2) NOT NULL
+);
+
+-- Таблица поездок (заказов)
+CREATE TABLE rides (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    client_id INT NOT NULL,
+    driver_id INT NULL,
+    dispatcher_id INT NOT NULL,
+    tariff_id INT NOT NULL,
+    start_address VARCHAR(255) NOT NULL,
+    end_address VARCHAR(255) NOT NULL,
+    distance_km DECIMAL(10,2),
+    total_cost DECIMAL(10,2),
+    status ENUM('new', 'assigned', 'in_progress', 'completed', 'cancelled') DEFAULT 'new',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    completed_at TIMESTAMP NULL,
+    FOREIGN KEY (client_id) REFERENCES clients(id),
+    FOREIGN KEY (driver_id) REFERENCES drivers(id),
+    FOREIGN KEY (dispatcher_id) REFERENCES dispatchers(id),
+    FOREIGN KEY (tariff_id) REFERENCES tariffs(id)
+);
+
+-- ============================================
+-- 2. ЗАПОЛНЯЕМ ТАРИФЫ
+-- ============================================
+INSERT INTO tariffs (name, price_per_km, price_per_minute) VALUES
+('Эконом', 15.00, 5.00),
+('Комфорт', 25.00, 8.00),
+('Бизнес', 40.00, 12.00),
+('Минивэн', 35.00, 10.00);
+
+-- ============================================
+-- 3. ЗАПОЛНЯЕМ ДИСПЕТЧЕРОВ
+-- ============================================
+INSERT INTO dispatchers (full_name, login, password) VALUES
+('Админ Админович', 'admin', '123'),
+('Смирнова Ольга', 'olga', '123');
+
+-- ============================================
+-- 4. ЗАПОЛНЯЕМ ВОДИТЕЛЕЙ
+-- ============================================
+INSERT INTO drivers (full_name, phone, car_model, car_number, status) VALUES
+('Иванов Иван', '+7-916-111-22-33', 'Kia Rio', 'А111АА77', 'available'),
+('Петров Петр', '+7-916-222-33-44', 'Hyundai Solaris', 'В222ВВ77', 'available'),
+('Сидоров Сидор', '+7-916-333-44-55', 'Skoda Rapid', 'С333СС77', 'available'),
+('Кузнецов Александр', '+7-916-444-55-66', 'Volkswagen Polo', 'К444КК77', 'on_shift'),
+('Соколов Денис', '+7-915-111-22-33', 'Kia Optima', 'А888АА77', 'busy');
+
+-- ============================================
+-- 5. ЗАПОЛНЯЕМ КЛИЕНТОВ
+-- ============================================
+INSERT INTO clients (full_name, phone) VALUES
+('Александрова Анна', '+7-903-111-11-11'),
+('Борисов Борис', '+7-903-222-22-22'),
+('Владимирова Елена', '+7-903-333-33-33'),
+('Григорьев Григорий', '+7-903-444-44-44'),
+('Дмитриева Мария', '+7-903-555-55-55'),
+('Егоров Егор', '+7-903-666-66-66'),
+('Жукова Наталья', '+7-903-777-77-77'),
+('Зверев Олег', '+7-903-888-88-88');
+
+-- ============================================
+-- 6. ЗАПОЛНЯЕМ ПОЕЗДКИ (ЗАКАЗЫ)
+-- ============================================
+
+-- НОВЫЕ ЗАКАЗЫ (будут видны в телефоне)
+INSERT INTO rides (client_id, driver_id, dispatcher_id, tariff_id, start_address, end_address, status) VALUES
+(1, NULL, 1, 1, 'ул. Тверская, д. 15', 'Ленинградский вокзал', 'new'),
+(2, NULL, 1, 2, 'Кутузовский пр-т, д. 30', 'Аэропорт Шереметьево', 'new'),
+(3, NULL, 2, 1, 'Ленинский пр-т, д. 45', 'Парк Горького', 'new'),
+(4, NULL, 1, 3, 'Новый Арбат, д. 20', 'Москва-Сити', 'new'),
+(5, NULL, 2, 2, 'Пр-т Мира, д. 50', 'ВДНХ', 'new'),
+(6, NULL, 1, 1, 'ул. Покровка, д. 10', 'Курский вокзал', 'new'),
+(7, NULL, 2, 4, 'Рублевское шоссе, д. 25', 'Сбербанк Арена', 'new'),
+(8, NULL, 1, 3, 'ул. Арбат, д. 35', 'Киевский вокзал', 'new');
+
+-- НАЗНАЧЕННЫЕ ЗАКАЗЫ
+INSERT INTO rides (client_id, driver_id, dispatcher_id, tariff_id, start_address, end_address, status) VALUES
+(5, 1, 1, 2, 'ул. Б. Дмитровка, д. 10', 'Большой театр', 'assigned'),
+(6, 2, 2, 1, 'пр-т Вернадского, д. 70', 'МГУ', 'assigned'),
+(7, 3, 1, 4, 'ул. Профсоюзная, д. 120', 'ТРЦ Калужский', 'assigned');
+
+-- ВЫПОЛНЕННЫЕ ЗАКАЗЫ
+INSERT INTO rides (client_id, driver_id, dispatcher_id, tariff_id, start_address, end_address, status, created_at, completed_at) VALUES
+(1, 4, 1, 1, 'ул. Академика Королева, д. 15', 'Останкино', 'completed', '2024-01-13 070000', '2024-01-13 073500'),
+(2, 5, 2, 2, 'Ленинградское ш., д. 45', 'Речной вокзал', 'completed', '2024-01-13 081500', '2024-01-13 090000'),
+(3, 4, 1, 3, 'ул. 1905 года, д. 10', 'Краснопресненская', 'completed', '2024-01-13 093000', '2024-01-13 100500'),
+(4, 5, 2, 1, 'Каширское ш., д. 60', 'Коломенское', 'completed', '2024-01-13 110000', '2024-01-13 114500');

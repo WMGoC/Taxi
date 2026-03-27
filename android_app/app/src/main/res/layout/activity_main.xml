@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#1E1E1E"
+    android:fitsSystemWindows="true"
+    android:paddingTop="16dp"
+    android:paddingBottom="8dp"
+    android:paddingStart="12dp"
+    android:paddingEnd="12dp">
+
+    <!-- Заголовок - уменьшен отступ -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Водительский терминал"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginBottom="8dp"
+        android:textColor="#FFD700"/>
+
+    <!-- Строка статуса - уменьшен отступ -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Фильтр по статусам:"
+        android:textSize="12sp"
+        android:textColor="#FFFFFF"
+        android:layout_marginBottom="4dp"/>
+
+    <!-- Кнопки фильтрации - уменьшены отступы -->
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:columnCount="2"
+        android:rowCount="2"
+        android:layout_marginBottom="4dp">
+
+        <Button
+            android:id="@+id/btnNew"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:layout_columnWeight="1"
+            android:layout_margin="2dp"
+            android:text="НОВЫЕ"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:backgroundTint="#27ae60"
+            android:textColor="#FFFFFF"
+            android:gravity="center"/>
+
+        <Button
+            android:id="@+id/btnAssigned"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:layout_columnWeight="1"
+            android:layout_margin="2dp"
+            android:text="НАЗНАЧЕНЫ"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:backgroundTint="#f39c12"
+            android:textColor="#FFFFFF"
+            android:gravity="center"/>
+
+        <Button
+            android:id="@+id/btnInProgress"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:layout_columnWeight="1"
+            android:layout_margin="2dp"
+            android:text="В ПУТИ"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:backgroundTint="#e67e22"
+            android:textColor="#FFFFFF"
+            android:gravity="center"/>
+
+        <Button
+            android:id="@+id/btnCompleted"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:layout_columnWeight="1"
+            android:layout_margin="2dp"
+            android:text="ВЫПОЛНЕНЫ"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:backgroundTint="#16a085"
+            android:textColor="#FFFFFF"
+            android:gravity="center"/>
+
+    </GridLayout>
+
+    <!-- Кнопка обновления - минимальный отступ -->
+    <Button
+        android:id="@+id/refreshButton"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:text="🔄 ОБНОВИТЬ ЗАКАЗЫ"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="8dp"
+        android:backgroundTint="#3498db"
+        android:textColor="#FFFFFF"/>
+
+    <!-- Заголовок списка -->
+    <TextView
+        android:id="@+id/titleStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Новые заказы:"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="4dp"
+        android:textColor="#FFFFFF"/>
+
+    <!-- Список заказов - максимальная высота -->
+    <ListView
+        android:id="@+id/ordersListView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:divider="#FFD700"
+        android:dividerHeight="1dp"
+        android:padding="6dp"
+        android:background="#2C2C2C"
+        android:scrollbars="vertical"/>
+
+    <!-- Информационная строка - минимальный отступ -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="📌 Нажмите на заказ для просмотра деталей"
+        android:textSize="10sp"
+        android:gravity="center"
+        android:layout_marginTop="4dp"
+        android:textColor="#888888"
+        android:padding="4dp"/>
+
+</LinearLayout>
